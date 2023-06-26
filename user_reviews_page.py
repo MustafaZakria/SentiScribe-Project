@@ -1,12 +1,12 @@
 import pandas as pd
 import numpy as np
 import streamlit as st
-st.set_page_config(page_title="SentiScribe", page_icon='https://cdn-icons-png.flaticon.com/512/8637/8637099.png')
 import matplotlib.pyplot as plt
 import plotly.express as px
 import scrapping.reviews_scrapping as scrap
 import predict
 import dataset.load_restaurants as rest
+import visualization
 
 restaurants_names = rest.load_restaurant_names()
 
@@ -14,10 +14,6 @@ restaurants_names = rest.load_restaurant_names()
 def convert_df(df):
     # IMPORTANT: Cache the conversion to prevent computation on every rerun
     return df.to_csv().encode('utf-8')
-
-def color_sentiment(val):
-    color = 'green' if val == 'Positive' else 'red'
-    return f'background-color: {color}; color: white'
 
 def choose_from_restaurants():
     selected_option = st.selectbox('Select an option', restaurants_names)
@@ -28,8 +24,8 @@ def choose_from_restaurants():
         st.write('Scrapping....')
         df_scrapped = scrap.scrap(selected_option)
         df_predicted = predict.sentiment_predict(df_scrapped)
-        df_predicted = df_predicted.style.applymap(color_sentiment, subset=['Sentiment'])
-        st.dataframe(df_predicted)
+        # st.dataframe(df_predicted.style.applymap(color_sentiment, subset=['Sentiment']))
+        visualization.make_dashboard(df_predicted)
     st.divider()
 
 def predict_a_csv():
