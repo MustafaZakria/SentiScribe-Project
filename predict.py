@@ -25,7 +25,6 @@ def sentiment_predict(df_reviews):
     temp_df["Sentiment"] = temp_df["Sentiment"].apply(
         lambda x: "Positive" if x == 1 else "Negative"
     )
-    temp_df = temp_df.drop(['cleaned_reviews'], axis=1)
     return temp_df
 
 def sentiment_predict_user_input(user_review):
