@@ -12,6 +12,7 @@ def labels_to_string(polarity):
     elif polarity == -1:
         return 'Negative'
 
+
 def sentiment_predict(df_reviews):
     temp_df = df_reviews.copy()
     temp_df["cleaned_reviews"] = temp_df["Reviews"].apply(data_preprocessing.preprocessing)
@@ -24,8 +25,10 @@ def sentiment_predict(df_reviews):
     temp_df["Sentiment"] = score
     temp_df["Sentiment"] = temp_df["Sentiment"].apply(
         lambda x: "Positive" if x == 1 else "Negative"
+        # lambda x: labels_to_string(x)
     )
     return temp_df
+
 
 def sentiment_predict_user_input(user_review):
     cleaned_text = data_preprocessing.preprocessing(user_review)
@@ -33,4 +36,3 @@ def sentiment_predict_user_input(user_review):
     score = model.predict(sequences)
     sentiment_label = labels_to_string(score)
     return sentiment_label
-
