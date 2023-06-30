@@ -2,26 +2,24 @@ import dataset.load_restaurants as load_restaurants
 import requests
 import pandas as pd
 
-
 def search_dictionary(dictionary, search_name):
     for key, value in dictionary.items():
         if value['name'] == search_name:
             return key
     return None
 
-
 def scrap(selected_option):
-    restaurant_name = selected_option
-    restaurants_dict = load_restaurants.load_dictionary_from_file()
 
-    key = search_dictionary(restaurants_dict, restaurant_name)
+    restaurant_name = selected_option
+
+    key = search_dictionary(load_restaurants.load_dictionary_from_file(), restaurant_name)
 
     if key != None:
-
+    
         pageCtr = 1
 
         reviews = []
-        # ratings = []
+        ratings = []
 
         while len(reviews) != 20:
 
@@ -60,7 +58,7 @@ def scrap(selected_option):
 
                 for i in range(20):
                     reviews.append(data['data'][i]['data']['text'])
-                    # ratings.append(data['data'][i]['data']['rating'])
+                    ratings.append(data['data'][i]['data']['rating'])
 
                 pageCtr = pageCtr + 1
 

@@ -10,12 +10,10 @@ import visualization
 
 restaurants_names = rest.load_restaurant_names()
 
-
 @st.cache_data
 def convert_df(df):
     # IMPORTANT: Cache the conversion to prevent computation on every rerun
     return df.to_csv().encode('utf-8')
-
 
 def choose_from_restaurants():
     selected_option = st.selectbox('Select an option', restaurants_names)
@@ -28,8 +26,7 @@ def choose_from_restaurants():
         df_predicted = predict.sentiment_predict(df_scrapped)
         # st.dataframe(df_predicted.style.applymap(color_sentiment, subset=['Sentiment']))
         visualization.make_dashboard(df_predicted)
-    # st.divider()
-
+    st.divider()
 
 def predict_a_csv():
     st.subheader("Upload your reviews!")
@@ -59,8 +56,7 @@ def predict_a_csv():
         else:
             st.text("Your CSV Does not Contain Column Reviews")
 
-    # st.divider()
-
+    st.divider()
 
 def predict_single_review():
     st.subheader("User Input Review Analysis")
@@ -81,69 +77,18 @@ def predict_single_review():
 
 def main_menu():
     st.title("Sentiment Analysis 😊😡")
-
-    page_bg_img = """
-    <style>
-    .stApp {
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-image: url("https://images.unsplash.com/photo-1542281286-9e0a16bb7366");    
-    
-    }
-    
-    [data-testid="stVerticalBlock"] {
-    background-color: rgba(239, 239, 240);
-    padding: 20px;
-    }
-    
-    
-    [data-testid="stHorizontalBlock"] {
-    padding: 0px
-    }
-
-    [data-testid="stHeader"] {
-    background-color: rgba(0, 0, 0, 0);
-    }
-    
-    [data-baseweb="select"] {
-    width: 300px;
-    }
-    
-    [data-baseweb="input"] {
-    width: 600px;
-    }
-    
-    [data-baseweb="tab"] {
-    background-color: rgba(0, 0, 0, 0);
-    }
-    </style>
-    """
-
-    st.markdown(page_bg_img, unsafe_allow_html=True)
-
-    # st.subheader("Zeko's Kitchen")
-
+    st.markdown('---')
+    st.subheader("Zeko's Kitchen")
     menu = ["Choose From Restaurants", "Upload a CSV", "Write a Single Review"]
-    # option = st.selectbox(
-    #     'Choose a way to provide your reviews!',
-    #     menu)
-    #
-    # st.write("<br>", unsafe_allow_html=True)
-    #
-    # if option == "Choose From Restaurants":
-    #     choose_from_restaurants()
-    # elif option == "Upload a CSV":
-    #     predict_a_csv()
-    # elif option == "Write a Single Review":
-    #     predict_single_review()
-
-    option = st.radio('Choose a way to provide your reviews!', menu)
-
-    st.write("<br>", unsafe_allow_html=True)
-
+    option = st.selectbox(
+        'Choose a way to provide your reviews!',
+        menu)
     if option == "Choose From Restaurants":
         choose_from_restaurants()
     elif option == "Upload a CSV":
         predict_a_csv()
     elif option == "Write a Single Review":
         predict_single_review()
+
+
+

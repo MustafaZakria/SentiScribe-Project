@@ -4,9 +4,14 @@ import streamlit as st
 from sklearn.feature_extraction.text import CountVectorizer
 import arabic_reshaper
 from bidi.algorithm import get_display
+from pandas import option_context
+# for visualization
 import plotly.express as px
+import plotly.io as pio
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
+from PIL import Image
 
 pd.set_option('display.max_colwidth', None)
 
@@ -22,7 +27,7 @@ def plot_sentiment(df_reviews):
         hole=0.3,
         title="<b>Sentiment Distribution</b>",
         color=sentiment_count.index,
-        # set the color of positive to green and negative to red
+        # set the color of positive to blue and negative to orange
         color_discrete_map={"Positive": "green", "Negative": "red"},
     )
     fig.update_traces(
@@ -33,12 +38,11 @@ def plot_sentiment(df_reviews):
     fig.update_layout(showlegend=False)
     return fig
 
-
 def plot_wordcloud(df_reviews, colormap="Greens"):
     # generate custom colormap
     # cmap = mpl.cm.get_cmap(colormap)(np.linspace(0, 1, 20))
     # cmap = mpl.colors.ListedColormap(cmap[10:15])
-    # combine all the preprocessed tweets into a single string
+     # combine all the preprocessed tweets into a single string
     text = " ".join(df_reviews["cleaned_reviews"])
     reshaped_text = arabic_reshaper.reshape(text)
     reshaped_text = get_display(reshaped_text)
@@ -59,7 +63,6 @@ def plot_wordcloud(df_reviews, colormap="Greens"):
     plt.axis("off")
     plt.title("Wordcloud", fontdict={"fontsize": 16}, fontweight="heavy", pad=20, y=1.0)
     return fig
-
 
 def dashboard(df_reviews, bar_color, wc_color):
     # make 3 columns for the first row of the dashboard
@@ -102,6 +105,7 @@ def dashboard(df_reviews, bar_color, wc_color):
         # pd.set_option('display.width', 1000)
         df_styled = df_reviews[["Reviews", "Sentiment"]].style.applymap(sentiment_color, subset=['Sentiment'])
         st.dataframe(df_styled)
+        
 
     with col2:
         # plot the wordcloud
@@ -109,6 +113,7 @@ def dashboard(df_reviews, bar_color, wc_color):
 
 
 def get_top_n_gram(df_reviews, ngram_range, n=10):
+
     # load the corpus and vectorizer
     corpus = df_reviews["cleaned_reviews"]
     vectorizer = CountVectorizer(
@@ -127,7 +132,6 @@ def get_top_n_gram(df_reviews, ngram_range, n=10):
     df["words"] = df["words"].str.title()
     return df
 
-
 def plot_n_gram(n_gram_df, title, color="#54A24B"):
     # plot the top n-grams frequencies in a bar chart
     fig = px.bar(
@@ -141,7 +145,6 @@ def plot_n_gram(n_gram_df, title, color="#54A24B"):
     fig.update_yaxes(autorange="reversed", title=None)
     fig.update_traces(hovertemplate="<b>%{y}</b><br>Count=%{x}", marker_color=color)
     return fig
-
 
 def make_dashboard(df_reviews):
     # create 3 tabs for all, positive, and negative tweets
