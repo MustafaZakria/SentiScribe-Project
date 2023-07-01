@@ -1,5 +1,3 @@
-import pandas as pd
-
 import models.model as my_model
 import data_preprocessing
 

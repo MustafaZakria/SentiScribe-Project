@@ -14,7 +14,7 @@ def scrap(selected_option):
 
     key = search_dictionary(load_restaurants.load_dictionary_from_file(), restaurant_name)
 
-    if key != None:
+    if key is not None:
     
         pageCtr = 1
 
