@@ -1,17 +1,15 @@
 import numpy as np
-import pandas as pd
 import streamlit as st
 from sklearn.feature_extraction.text import CountVectorizer
 import arabic_reshaper
 from bidi.algorithm import get_display
-from pandas import option_context
 # for visualization
 import plotly.express as px
-import plotly.io as pio
-import matplotlib as mpl
+
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
-from PIL import Image
+import altair as alt
+import pandas as pd
 
 pd.set_option('display.max_colwidth', None)
 
@@ -74,19 +72,19 @@ def dashboard(df_reviews, bar_color, wc_color):
         st.plotly_chart(sentiment_plot, theme=None, use_container_width=True)
 
     with col2:
-        # plot the top 10 occuring words 
-        top_unigram = get_top_n_gram(df_reviews, ngram_range=(1, 1), n=10)
+        # plot the top 10 occuring bigrams
+        top_unigram = get_top_n_gram(df_reviews, ngram_range=(2, 2), n=10)
         unigram_plot = plot_n_gram(
-            top_unigram, title="Top 10 Occuring Words", color=bar_color
+            top_unigram, title="Top 10 Occurring Words", color=bar_color
         )
         unigram_plot.update_layout(height=350)
         st.plotly_chart(unigram_plot, theme=None, use_container_width=True)
 
     with col3:
-        # plot the top 10 occuring bigrams
-        top_bigram = get_top_n_gram(df_reviews, ngram_range=(2, 2), n=10)
+        # plot the top 10 occuring trigrams
+        top_bigram = get_top_n_gram(df_reviews, ngram_range=(3, 3), n=10)
         bigram_plot = plot_n_gram(
-            top_bigram, title="Top 10 Occuring Bigrams", color=bar_color
+            top_bigram, title="Top 10 Occurring Words", color=bar_color
         )
         bigram_plot.update_layout(height=350)
         st.plotly_chart(bigram_plot, theme=None, use_container_width=True)
@@ -103,7 +101,7 @@ def dashboard(df_reviews, bar_color, wc_color):
 
         # show the dataframe containing the tweets and their sentiment
         # pd.set_option('display.width', 1000)
-        df_styled = df_reviews[["Reviews", "Sentiment"]].style.applymap(sentiment_color, subset=['Sentiment'])
+        df_styled = df_reviews[["Reviews", "Sentiment", 'Score']].style.applymap(sentiment_color, subset=['Sentiment'])
         st.dataframe(df_styled)
         
 
@@ -146,12 +144,66 @@ def plot_n_gram(n_gram_df, title, color="#54A24B"):
     fig.update_traces(hovertemplate="<b>%{y}</b><br>Count=%{x}", marker_color=color)
     return fig
 
-def make_dashboard(df_reviews):
+
+def sentiment_over_time(df):
+    col1, col2, col3 = st.columns(3)
+    with col2:
+        df['Date'] = pd.to_datetime(df[['Year', 'Month']].assign(day=1))
+        counts = {}
+
+        # Iterate through each data point
+        for index, data in df.iterrows():
+            sentiment = data['Sentiment']
+            date = data['Date']
+
+            # Increment the corresponding counter based on sentiment
+            if date not in counts:
+                counts[date] = {'Positive': 0, 'Negative': 0}
+
+            counts[date][sentiment] += 1
+
+        dates = list(counts.keys())
+        positive_counts = []
+        negative_counts = []
+        for date in counts:
+            positive_counts.append(counts[date]['Positive'])
+            negative_counts.append(counts[date]['Negative'])
+
+        data = {
+            'Date': dates,
+            'Positive': positive_counts,
+            'Negative': negative_counts
+        }
+
+        # Convert data to DataFrame
+        df = pd.DataFrame(data)
+        color_scale = alt.Scale(domain=['Positive', 'Negative'],
+                                range=['green', 'red'])
+        # Create the Altair chart
+        chart = alt.Chart(df, title='Sentiment Over Time').mark_line().encode(
+            x='Date:T',
+            y='Counts:Q',
+            color=alt.Color('sentiment:N', scale=color_scale)
+        ).transform_fold(
+            fold=['Positive', 'Negative'],
+            as_=['sentiment', 'Counts']
+        )
+
+        chart = chart.properties(
+            width=600,  # Set the width of the chart in pixels
+            height=400  # Set the height of the chart in pixels
+        )
+
+        st.altair_chart(chart)
+
+
+def make_dashboard(df_reviews, src):
     # create 3 tabs for all, positive, and negative tweets
     tab1, tab2, tab3 = st.tabs(["All", "Positive 😊", "Negative ☹️"])
     with tab1:
         dashboard(df_reviews, bar_color="#1F77B4", wc_color="Blues")
-
+        if src == 'choose_from_restaurants':
+            sentiment_over_time(df_reviews)
     with tab2:
         # make dashboard for tweets with positive sentiment
         df_pos = df_reviews[df_reviews['Sentiment'] == 'Positive']
@@ -159,5 +211,5 @@ def make_dashboard(df_reviews):
 
     with tab3:
         # make dashboard for tweets with negative sentiment
-        df_pos = df_reviews[df_reviews['Sentiment'] == 'Negative']
-        dashboard(df_pos, bar_color="red", wc_color="Oranges")
+        df_neg = df_reviews[df_reviews['Sentiment'] == 'Negative']
+        dashboard(df_neg, bar_color="red", wc_color="Oranges")

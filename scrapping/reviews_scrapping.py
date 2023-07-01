@@ -1,7 +1,7 @@
 import dataset.load_restaurants as load_restaurants
 import requests
 import pandas as pd
-
+import dateutil.parser
 def search_dictionary(dictionary, search_name):
     for key, value in dictionary.items():
         if value['name'] == search_name:
@@ -20,8 +20,10 @@ def scrap(selected_option):
 
         reviews = []
         ratings = []
-
-        while len(reviews) != 20:
+        months = []
+        years = []
+        days = []
+        while len(reviews) != 100:
 
             try:
 
@@ -59,11 +61,17 @@ def scrap(selected_option):
                 for i in range(20):
                     reviews.append(data['data'][i]['data']['text'])
                     ratings.append(data['data'][i]['data']['rating'])
+                    date_str = data['data'][i]['trace']['created']['at']
+                    date = dateutil.parser.isoparse(date_str).date()
+                    days.append(date.day)
+                    months.append(date.month)
+                    years.append(date.year)
 
                 pageCtr = pageCtr + 1
 
             except:
                 break
 
-        df = pd.DataFrame({"Reviews": reviews})
-        return df
+        df = pd.DataFrame({"Reviews": reviews, 'Day': days, 'Month': months, 'Year': years})
+
+        return None if df.empty else df
