@@ -1,8 +1,5 @@
 import pandas as pd
-import numpy as np
 import streamlit as st
-import matplotlib.pyplot as plt
-import plotly.express as px
 import scrapping.reviews_scrapping as scrap
 import predict
 import dataset.load_restaurants as rest
@@ -50,7 +47,7 @@ def predict_a_csv():
             dataset = predict.sentiment_predict(data)
             new_df = pd.DataFrame({'Reviews': dataset['Reviews'], 'Sentiment': dataset['Sentiment'], 'Score': dataset['Score']})
             st.subheader("Predicted Sentiment", anchor=False)
-            csv_file = convert_df(dataset)
+            csv_file = convert_df(new_df)
 
             visualization.make_dashboard(dataset, src='csv')
 
