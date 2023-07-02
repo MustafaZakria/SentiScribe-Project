@@ -59,7 +59,7 @@ def predict_a_csv():
             )
 
         else:
-            st.text("Your CSV Does not Contain Column Reviews")
+            st.text("Your CSV doesn't contain a column named 'Reviews'")
 
         st.divider()
 
@@ -70,13 +70,13 @@ def predict_single_review():
         within it (positive or negative).
         """)
     st.write("")
-    user_review = st.text_input('Enter Review', placeholder='Write your review...', key="")
+    user_review = st.text_input('Enter Review', placeholder='Write your review...')
+    
     if st.button('Predict'):
         if user_review:
             sentiment_label, score = predict.sentiment_predict_user_input(user_review)
-            col1, col2= st.columns(2)
+            
             if sentiment_label == "Positive":
-
                 st.write(f"Polarity: **:green[{sentiment_label}]**")
                 st.write(f"Score of Positivity: **:green[{score}]**")
             else:

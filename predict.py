@@ -1,9 +1,9 @@
 import models.model as my_model
 import data_preprocessing
+import streamlit as st
 
 # Load the model
 model = my_model.load_model()
-
 
 def labels_to_sentiment(polarity):
     if polarity == "LABEL_1":
@@ -12,6 +12,7 @@ def labels_to_sentiment(polarity):
         print(polarity)
         return 'Negative'
 
+@st.cache_data
 def sentiment_predict(df_reviews):
     temp_df = df_reviews.copy()
     temp_df["cleaned_reviews"] = temp_df["Reviews"].apply(data_preprocessing.preprocessing)
@@ -32,6 +33,7 @@ def sentiment_predict_user_input(user_review):
     #cleaned_text = data_preprocessing.preprocessing(user_review)
     #sequences = vectorizer.transform([cleaned_text])
     #score = model.predict(sequences)
+    user_review = data_preprocessing.preprocessing(user_review)
     prediction = model(user_review)
     if prediction[0]['label'] == 'LABEL_1':
         return 'Positive', prediction[0]['score']
