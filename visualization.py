@@ -13,7 +13,7 @@ import pandas as pd
 
 pd.set_option('display.max_colwidth', None)
 
-@st.cache_data
+
 def plot_sentiment(df_reviews):
     # count the number tweets based on the sentiment
     sentiment_count = df_reviews["Sentiment"].value_counts()
@@ -36,8 +36,7 @@ def plot_sentiment(df_reviews):
     fig.update_layout(showlegend=False)
     return fig
 
-@st.cache_data
-def plot_wordcloud(df_reviews):
+def plot_wordcloud(df_reviews, colormap="Greens"):
     # generate custom colormap
     # cmap = mpl.cm.get_cmap(colormap)(np.linspace(0, 1, 20))
     # cmap = mpl.colors.ListedColormap(cmap[10:15])
@@ -63,8 +62,7 @@ def plot_wordcloud(df_reviews):
     plt.title("Wordcloud", fontdict={"fontsize": 16}, fontweight="heavy", pad=20, y=1.0)
     return fig
 
-@st.cache_data
-def dashboard(df_reviews, bar_color):
+def dashboard(df_reviews, bar_color, wc_color):
     # make 3 columns for the first row of the dashboard
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -73,26 +71,23 @@ def dashboard(df_reviews, bar_color):
         sentiment_plot.update_layout(height=350, title_x=0.5)
         st.plotly_chart(sentiment_plot, theme=None, use_container_width=True)
 
-    try:
-        with col2:
-            # plot the top 10 occuring bigrams
-            top_unigram = get_top_n_gram(df_reviews, ngram_range=(2, 2), n=10)
-            unigram_plot = plot_n_gram(
-                top_unigram, title="Top 10 Occurring Words", color=bar_color
-            )
-            unigram_plot.update_layout(height=350)
-            st.plotly_chart(unigram_plot, theme=None, use_container_width=True)
+    with col2:
+        # plot the top 10 occuring bigrams
+        top_unigram = get_top_n_gram(df_reviews, ngram_range=(2, 2), n=10)
+        unigram_plot = plot_n_gram(
+            top_unigram, title="Top 10 Occurring Words", color=bar_color
+        )
+        unigram_plot.update_layout(height=350)
+        st.plotly_chart(unigram_plot, theme=None, use_container_width=True)
 
-        with col3:
-            # plot the top 10 occuring trigrams
-            top_bigram = get_top_n_gram(df_reviews, ngram_range=(3, 3), n=10)
-            bigram_plot = plot_n_gram(
-                top_bigram, title="Top 10 Occurring Words", color=bar_color
-            )
-            bigram_plot.update_layout(height=350)
-            st.plotly_chart(bigram_plot, theme=None, use_container_width=True)
-    except:
-        pass
+    with col3:
+        # plot the top 10 occuring trigrams
+        top_bigram = get_top_n_gram(df_reviews, ngram_range=(3, 3), n=10)
+        bigram_plot = plot_n_gram(
+            top_bigram, title="Top 10 Occurring Words", color=bar_color
+        )
+        bigram_plot.update_layout(height=350)
+        st.plotly_chart(bigram_plot, theme=None, use_container_width=True)
 
     # make 2 columns for the second row of the dashboard
     col1, col2 = st.columns([0.6, 0.4])
@@ -115,12 +110,10 @@ def dashboard(df_reviews, bar_color):
         st.pyplot(plot_wordcloud(df_reviews))
 
 
-@st.cache_data
 def get_top_n_gram(df_reviews, ngram_range, n=10):
 
     # load the corpus and vectorizer
     corpus = df_reviews["cleaned_reviews"]
-
     vectorizer = CountVectorizer(
         analyzer="word", ngram_range=ngram_range
     )
@@ -152,15 +145,14 @@ def plot_n_gram(n_gram_df, title, color="#54A24B"):
     return fig
 
 
-@st.cache_data
 def sentiment_over_time(df):
-    _, col2, _ = st.columns(3)
+    col1, col2, col3 = st.columns(3)
     with col2:
         df['Date'] = pd.to_datetime(df[['Year', 'Month']].assign(day=1))
         counts = {}
 
         # Iterate through each data point
-        for _, data in df.iterrows():
+        for index, data in df.iterrows():
             sentiment = data['Sentiment']
             date = data['Date']
 
@@ -209,15 +201,15 @@ def make_dashboard(df_reviews, src):
     # create 3 tabs for all, positive, and negative tweets
     tab1, tab2, tab3 = st.tabs(["All", "Positive 😊", "Negative ☹️"])
     with tab1:
-        dashboard(df_reviews, bar_color="#1F77B4")
+        dashboard(df_reviews, bar_color="#1F77B4", wc_color="Blues")
         if src == 'choose_from_restaurants':
             sentiment_over_time(df_reviews)
     with tab2:
         # make dashboard for tweets with positive sentiment
         df_pos = df_reviews[df_reviews['Sentiment'] == 'Positive']
-        st.write("No positive reviews") if df_pos.empty else dashboard(df_pos, bar_color="green")
+        dashboard(df_pos, bar_color="green", wc_color="Greens")
 
     with tab3:
         # make dashboard for tweets with negative sentiment
         df_neg = df_reviews[df_reviews['Sentiment'] == 'Negative']
-        st.write("No negative reviews") if df_neg.empty else dashboard(df_neg, bar_color="red")
+        dashboard(df_neg, bar_color="red", wc_color="Oranges")
