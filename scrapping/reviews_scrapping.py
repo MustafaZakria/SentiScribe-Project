@@ -8,7 +8,7 @@ def search_dictionary(dictionary, search_name):
             return key
     return None
 
-def scrap(selected_option):
+def scrap(selected_option, number_of_reviews):
 
     restaurant_name = selected_option
 
@@ -23,7 +23,8 @@ def scrap(selected_option):
         months = []
         years = []
         days = []
-        while len(reviews) != 100:
+        
+        while len(reviews) != number_of_reviews:
 
             try:
 
