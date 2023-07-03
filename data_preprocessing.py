@@ -89,14 +89,11 @@ def preprocessing(text):
   text = re.sub('\s+', ' ', str(text))
   text = araby.strip_tashkeel(text)
   text = cleaning(text)
-  text = stop_word_removal(text)
-
   return text
 
 def remove_empty_cells(dataset):
     dataset = dataset.replace("", np.nan)
     dataset = dataset.dropna()
-
     return dataset
 
 def drop_duplicate(dataset, column_name):
