@@ -75,21 +75,34 @@ def predict_single_review():
     if st.button('Predict'):
         if user_review:
             sentiment_label, score = predict.sentiment_predict_user_input(user_review)
-            
-            if sentiment_label == "Positive":
+            if sentiment_label == 'None':
+                st.write("You have Entered a Non-Arabic Text")
+
+            elif sentiment_label == "Positive":
                 st.write(f"Polarity: **:green[{sentiment_label}]**")
                 st.write(f"Score of Positivity: **:green[{score}]**")
             else:
                 st.write(f"Polarity: **:red[{sentiment_label}]**")
                 st.write(f"Score of Negativity: **:red[{score}]**")
+        else:
+            st.write("You Entered an Empty Review")
 
 
 def main_menu():
     st.markdown(
         """
         <div style='display: flex; align-items: center;'>
-            <img src='https://cdn-icons-png.flaticon.com/512/8637/8637099.png' alt='icon' width='50px' style='margin-right: 10px;'> 
-            <h1 style='font-size: 50px;'>SentiScribe </h1> 
+            <img src='https://i.imgur.com/zXj3C1i.png' alt='icon' width='50px' style='margin-right: 10px;'> 
+            <h1 style='font-size: 50px;'>SentiScribe </h1>
+        </div>
+
+        """,
+        unsafe_allow_html=True
+    )
+    st.markdown(
+        """
+        <div style='display: flex; align-items: center;'>
+            <strong style='font-size: 20px;'>Unlock the Voice of Egyptian Diners: SentiScribe Crafting Sentiment Insights for Every Taste </strong>
         </div>
 
         """,
