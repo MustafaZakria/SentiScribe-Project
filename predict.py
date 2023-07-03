@@ -26,7 +26,7 @@ def sentiment_predict(df_reviews):
         temp_df.at[index, "Sentiment"] = sentiment
         temp_df.at[index, "Score"] = score
 
-    return temp_df
+    return temp_df.reset_index(drop=True)
 
 def sentiment_predict_user_input(user_review):
     user_review = data_preprocessing.preprocessing(user_review)
