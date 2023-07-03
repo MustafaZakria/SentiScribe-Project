@@ -15,7 +15,7 @@ def labels_to_sentiment(polarity):
 @st.cache_data
 def sentiment_predict(df_reviews):
     temp_df = df_reviews.copy()
-    temp_df["cleaned_reviews"] = temp_df["Reviews"].apply(data_preprocessing.preprocessing)
+    temp_df["cleaned_reviews"] = temp_df["Reviews"].apply(data_preprocessing.bert_preprocessing)
     temp_df = temp_df[temp_df['cleaned_reviews'].str.len() > 0]
     temp_df['Sentiment'] = ''
     temp_df['Score'] = ''
@@ -30,16 +30,12 @@ def sentiment_predict(df_reviews):
     return temp_df
 
 def sentiment_predict_user_input(user_review):
-    #cleaned_text = data_preprocessing.preprocessing(user_review)
-    #sequences = vectorizer.transform([cleaned_text])
-    #score = model.predict(sequences)
-    user_review = data_preprocessing.preprocessing(user_review)
-    prediction = model(user_review)
-    if prediction[0]['label'] == 'LABEL_1':
-        return 'Positive', prediction[0]['score']
+    user_review = data_preprocessing.bert_preprocessing(user_review)
+    if len(user_review) == 0:
+        return "None", 0
     else:
-        return 'Negative', prediction[0]['score']
-    #sentiment_label = labels_to_sentiment(prediction[0]['label'])
-    #print(prediction[0]['label'])
-    #return model(sentiment_label)
-
+        prediction = model(user_review)
+        if prediction[0]['label'] == 'LABEL_1':
+            return 'Positive', prediction[0]['score']
+        else:
+            return 'Negative', prediction[0]['score']
