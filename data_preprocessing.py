@@ -1,4 +1,3 @@
-import nltk
 import re
 import pyarabic.araby as araby
 import emoji
@@ -35,7 +34,7 @@ def negation_replacement(text):
 
 @st.cache_resource
 def cleaning(text):
-   Arabic_numbers = ['٤','١','٢','٣','٥','٦','٧','٨','٩','٠']
+   arabic_numbers = ['٤','١','٢','٣','٥','٦','٧','٨','٩','٠']
    special_character = ['؟','،','?',',','!','.',':','"','""','‘‘','‘','؛','↓',"'", '‰',
                       '`','€',';','ç','ı','À','@','٬','~᷂','٫','⁩◕','.',
                       '=','#','$','%','^','&','*','()',')','(','\\','/',
@@ -47,8 +46,8 @@ def cleaning(text):
       text = text.replace(special_character[word], '')
 
    #replace  arabic numbers with whitespaces
-   for word in range(0, len(Arabic_numbers)):
-      text = text.replace(Arabic_numbers[word], '')
+   for word in range(0, len(arabic_numbers)):
+      text = text.replace(arabic_numbers[word], '')
 
    # Using regex to remove all non-Arabic letters, digits, punctuation marks, and emojis
    text = re.sub(r'[^\u0600-\u06FF\u0660-\u0669\u06F0-\u06F9\s\U0001F600-\U0001F64F\U0001F300-\U0001F5FF\U0001F680-\U0001F6FF]+', '', text)
