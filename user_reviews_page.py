@@ -1,8 +1,5 @@
 import pandas as pd
-import numpy as np
 import streamlit as st
-import matplotlib.pyplot as plt
-import plotly.express as px
 import scrapping.reviews_scrapping as scrap
 import predict
 import dataset.load_restaurants as rest
@@ -19,10 +16,12 @@ def choose_from_restaurants():
     selected_option = st.selectbox('Select an option', restaurants_names)
     st.write('You selected:', selected_option)
 
+    number_of_reviews = st.slider("How many reviews needs to be scrapped?\n\n:red[Note: the restaurant's reviews may be less than the specified.]", min_value=20, max_value=1000, value=20, step=20)
+
     if st.button('Scrap and Predict!'):
         st.write('It may take sometime, please be patient:)')
         st.write('Scrapping....')
-        df_scrapped = scrap.scrap(selected_option)
+        df_scrapped = scrap.scrap(selected_option, number_of_reviews)
 
         if df_scrapped is None:
             text = f"{selected_option} has no reviews"
@@ -50,7 +49,7 @@ def predict_a_csv():
             dataset = predict.sentiment_predict(data)
             new_df = pd.DataFrame({'Reviews': dataset['Reviews'], 'Sentiment': dataset['Sentiment'], 'Score': dataset['Score']})
             st.subheader("Predicted Sentiment", anchor=False)
-            csv_file = convert_df(dataset)
+            csv_file = convert_df(new_df)
 
             visualization.make_dashboard(dataset, src='csv')
 
@@ -91,7 +90,7 @@ def main_menu():
     st.markdown(
         """
         <div style='display: flex; align-items: center;'>
-            <img src='https://cdn-icons-png.flaticon.com/512/8637/8637099.png' alt='icon' width='50px' style='margin-right: 10px;'> 
+            <img src='icons/FilledDark.png' alt='icon' width='50px' style='margin-right: 10px;'> 
             <h1 style='font-size: 50px;'>SentiScribe </h1> 
         </div>
 
@@ -111,5 +110,3 @@ def main_menu():
         predict_a_csv()
     elif option == "Write a Single Review":
         predict_single_review()
-
-
