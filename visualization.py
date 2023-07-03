@@ -3,9 +3,10 @@ import streamlit as st
 from sklearn.feature_extraction.text import CountVectorizer
 import arabic_reshaper
 from bidi.algorithm import get_display
+# To get stop_words
+from models.model import load_stopwords
 # for visualization
 import plotly.express as px
-
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 import altair as alt
@@ -66,6 +67,7 @@ def plot_wordcloud(df_reviews):
 @st.cache_data
 def dashboard(df_reviews, bar_color):
     # make 3 columns for the first row of the dashboard
+    df_reviews['cleaned_reviews'] = df_reviews['cleaned_reviews'].apply(remove_stop_words)
     col1, col2, col3 = st.columns(3)
     with col1:
         # plot the sentiment distribution
@@ -114,6 +116,10 @@ def dashboard(df_reviews, bar_color):
         # plot the wordcloud
         st.pyplot(plot_wordcloud(df_reviews))
 
+stop_words = load_stopwords()
+
+def remove_stop_words(text):
+    return ' '.join([word for word in text.split() if word not in stop_words])
 
 @st.cache_data
 def get_top_n_gram(df_reviews, ngram_range, n=10):
@@ -206,18 +212,18 @@ def sentiment_over_time(df):
 
 
 def make_dashboard(df_reviews, src):
-    # create 3 tabs for all, positive, and negative tweets
     tab1, tab2, tab3 = st.tabs(["All", "Positive 😊", "Negative ☹️"])
+    # Both positive and negative reviews tab
     with tab1:
         dashboard(df_reviews, bar_color="#1F77B4")
         if src == 'choose_from_restaurants':
             sentiment_over_time(df_reviews)
     with tab2:
-        # make dashboard for tweets with positive sentiment
+        # Positive reviews tab
         df_pos = df_reviews[df_reviews['Sentiment'] == 'Positive']
         st.write("No positive reviews") if df_pos.empty else dashboard(df_pos, bar_color="green")
 
     with tab3:
-        # make dashboard for tweets with negative sentiment
+        # Negative reviews tab
         df_neg = df_reviews[df_reviews['Sentiment'] == 'Negative']
         st.write("No negative reviews") if df_neg.empty else dashboard(df_neg, bar_color="red")
