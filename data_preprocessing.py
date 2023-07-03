@@ -89,24 +89,9 @@ def preprocessing(text):
   text = re.sub('\s+', ' ', str(text))
   text = araby.strip_tashkeel(text)
   text = cleaning(text)
-  #text = stop_word_removal(text)
+  text = stop_word_removal(text)
 
   return text
-
-@st.cache_resource
-def bert_preprocessing(text):
-    text = re.sub(
-        r'[^\u0600-\u06FF\u0660-\u0669\u06F0-\u06F9\s\U0001F600-\U0001F64F\U0001F300-\U0001F5FF\U0001F680-\U0001F6FF]+',
-        '', text)
-    # text = re.sub(r'(.)\1+', r'\1', text)
-
-    p_longation = re.compile(r'(.)\1+')
-    subst = r"\1\1"
-    text = re.sub(p_longation, subst, text)
-    text = text.replace('وو', 'و')
-    text = text.replace('يي', 'ي')
-    text = text.replace('اا', 'ا')
-    return text
 
 def remove_empty_cells(dataset):
     dataset = dataset.replace("", np.nan)
