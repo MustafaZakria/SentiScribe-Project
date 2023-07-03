@@ -29,15 +29,13 @@ def sentiment_predict(df_reviews):
     return temp_df
 
 def sentiment_predict_user_input(user_review):
-    #cleaned_text = data_preprocessing.preprocessing(user_review)
-    #sequences = vectorizer.transform([cleaned_text])
-    #score = model.predict(sequences)
-    prediction = model(user_review)
-    if prediction[0]['label'] == 'LABEL_1':
-        return 'Positive', prediction[0]['score']
+    user_review = data_preprocessing.preprocessing(user_review)
+    if len(user_review) == 0:
+        return "None", 0
     else:
-        return 'Negative', prediction[0]['score']
-    #sentiment_label = labels_to_sentiment(prediction[0]['label'])
-    #print(prediction[0]['label'])
-    #return model(sentiment_label)
+        prediction = model(user_review)
+        if prediction[0]['label'] == 'LABEL_1':
+            return 'Positive', prediction[0]['score']
+        else:
+            return 'Negative', prediction[0]['score']
 
