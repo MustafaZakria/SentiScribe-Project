@@ -37,7 +37,7 @@ def predict_a_csv():
     st.subheader("Upload your reviews!", anchor=False)
     st.markdown("**Hint: Please name the reviews column as :red['Reviews']**")
     with st.expander('Analyze CSV'):
-        upl = st.file_uploader('Upload file')
+        upl = st.file_uploader('Upload file', type='csv')
     if upl:
         data = pd.read_csv(upl)
         flag = False
