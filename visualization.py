@@ -209,7 +209,7 @@ def sentiment_over_time(df):
 
 def make_dashboard(df_reviews, src):
     if df_reviews.empty:
-        st.write("**:red[Restauarant has English reviews only..]**")
+        st.write("**:red[Restaurant has English reviews only..]**")
     else:
         tab1, tab2, tab3 = st.tabs(["All", "Positive 😊", "Negative ☹️"])
         
