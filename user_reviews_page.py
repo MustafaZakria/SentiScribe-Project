@@ -77,7 +77,7 @@ def predict_single_review():
         if user_review:
             sentiment_label, score = predict.sentiment_predict_user_input(user_review)
             if sentiment_label == 'None':
-                st.write("You have Entered a Non-Arabic Text")
+                st.write("**:red[You have Entered a Non-Arabic Text]**")
 
             elif sentiment_label == "Positive":
                 st.write(f"Polarity: **:green[{sentiment_label}]**")
@@ -87,7 +87,7 @@ def predict_single_review():
                 st.write(f"Polarity: **:red[{sentiment_label}]**")
                 st.write(f"Score of Negativity: **:red[{score}]**")
         else:
-            st.write("You Entered an Empty Review")
+            st.write("**:red[You Entered an Empty Review]**")
 
 
 def main_menu():
