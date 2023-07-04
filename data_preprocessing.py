@@ -20,7 +20,7 @@ def remove_arabic_digits(text):
 def preprocessing(text):
 
     # Using regex to remove all non-Arabic letters, digits, punctuation marks, and emojis
-    text = re.sub(r'[^\s\u0600-\u06FF]', '', text)
+    text = re.sub(r'[^\s\u0600-\u06FF]', '', str(text))
 
     #Remove Diacriticts
     text = remove_diacritics(text)
@@ -52,3 +52,4 @@ def remove_empty_cells(dataset):
 
 def drop_duplicate(dataset, column_name):
     return dataset.drop_duplicates(subset=[column_name])
+
