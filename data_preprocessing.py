@@ -1,5 +1,10 @@
 import re
 
+special_character = ['؟','،','?',',','!','.',':','"','""','‘‘','‘','؛','↓',"'", '‰',
+                      '`','€',';','ç','ı','À','@','٬','~᷂','٫','⁩◕','.',
+                      '=','#','$','%','^','&','*','()',')','(','\\','/',
+                      '((', '_', '"','"', '…','-','×','ツ','+','%','٪','⁩ლ']
+
 def remove_diacritics(text):
     arabic_diacritics = re.compile(""" ّ    | # Tashdid
                              َ    | # Fatha
@@ -19,10 +24,13 @@ def remove_arabic_digits(text):
 
 def preprocessing(text):
 
+    for word in range(0, len(special_character)):
+        text = text.replace(special_character[word], '')
+
     # Using regex to remove all non-Arabic letters, digits, punctuation marks, and emojis
     text = re.sub(r'[^\s\u0600-\u06FF]', '', str(text))
 
-    #Remove Diacriticts
+    # Remove Diacriticts
     text = remove_diacritics(text)
 
     text = remove_arabic_digits(text)
@@ -46,10 +54,3 @@ def preprocessing(text):
     text = re.sub('\s+', ' ', text)
 
     return text.strip()
-
-def remove_empty_cells(dataset):
-    return dataset[dataset['cleaned_reviews'].str.len() > 0]
-
-def drop_duplicate(dataset, column_name):
-    return dataset.drop_duplicates(subset=[column_name])
-
