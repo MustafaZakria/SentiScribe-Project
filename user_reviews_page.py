@@ -9,7 +9,6 @@ restaurants_names = rest.load_restaurant_names()
 
 @st.cache_data
 def convert_df(df):
-    # IMPORTANT: Cache the conversion to prevent computation on every rerun
     return df.to_csv().encode('utf-8')
 
 def choose_from_restaurants():
@@ -95,6 +94,7 @@ def predict_single_review():
             st.write("**:red[You Entered an Empty Review]**")
 
 
+@st.cache_data(experimental_allow_widgets=True)
 def main_menu():
     st.markdown(
         """
