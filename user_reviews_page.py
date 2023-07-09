@@ -46,6 +46,11 @@ def predict_a_csv():
                 flag = True
                 break
         if flag:
+            if data.empty:
+                text = "Restaurant has no reviews"
+                centered_text = f"<p style='text-align: center; font-size: large; font-weight: bold; color: red'>{text}</p>"
+                st.markdown(centered_text, unsafe_allow_html=True)
+                return
             dataset = predict.sentiment_predict(data)
             new_df = pd.DataFrame({'Reviews': dataset['Reviews'], 'Sentiment': dataset['Sentiment'], 'Score': dataset['Score']})
             st.subheader("Predicted Sentiment", anchor=False)
